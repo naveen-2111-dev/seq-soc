@@ -1,0 +1,522 @@
+{
+	"info": {
+		"_postman_id": "af6cee2e-099e-43c8-b8f1-f84f5157cb6d",
+		"name": "anony",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33147620",
+		"_collection_link": "https://recipe-5144.postman.co/workspace/eeee~74400846-3491-4fb6-9f66-081513788164/collection/33147620-af6cee2e-099e-43c8-b8f1-f84f5157cb6d?action=share&source=collection_link&creator=33147620"
+	},
+	"item": [
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"over the mountains\",\n    \"imageUrl\": \"https://imgs.search.brave.com/3HLqfrRONepJtEt4tj2PfVm7K92zoGT6DAHYO9nraMA/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAwLzg0LzExLzYx/LzM2MF9GXzg0MTE2/MTQ5X1lnaGV4REcy/MmNERlFPdjlNQWJp/RWVSazF3UGlqSFY3/LmpwZw\",\n    \"userId\": \"4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base url}}/api/posts/create",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get All post",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base url}}/api/posts/all",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "trending",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base url}}/api/posts/trending",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"trending"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "visible posts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base url}}/api/posts/visibility/:visibility",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"visibility",
+								":visibility"
+							],
+							"variable": [
+								{
+									"key": "visibility",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base url}}/api/posts/:postId",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								":postId"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "28"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upvote",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"cr\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base url}}/api/posts/downvote/:postId",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"downvote",
+								":postId"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "28"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upvote",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"cr\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base url}}/api/posts/upvote/:postId",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"upvote",
+								":postId"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "28"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update post",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"this is new content\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base url}}/api/posts/update/:postId",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"update",
+								":postId"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change visibility",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"visibility\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base url}}/api/posts/visibility/:postId",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"visibility",
+								":postId"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "28"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-post-with-comment",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base url}}/api/comments/getpostwithcomment",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"comments",
+								"getpostwithcomment"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"rajan.naveen@gwcdata.ai\",\n    \"password\": \"naveen rajan\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base url}}/api/auth/login",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"naveen\",\n    \"lastname\": \"rajan\",\n    \"email\": \"rajan@gwcdata.ai\",\n    \"password\": \"naveen rajan\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base url}}/api/auth/register",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "comments",
+			"item": [
+				{
+					"name": "add comments",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"lol, funny\",\n    \"userId\": \"4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base url}}/api/comments/:postId",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"comments",
+								":postId"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get comment",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base url}}/api/comments/:commentId",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"comments",
+								":commentId"
+							],
+							"variable": [
+								{
+									"key": "commentId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCommentsbyPost",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base url}}/api/comments/post/:postId",
+							"host": [
+								"{{base url}}"
+							],
+							"path": [
+								"api",
+								"comments",
+								"post",
+								":postId"
+							],
+							"variable": [
+								{
+									"key": "postId",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base url",
+			"value": ""
+		}
+	]
+}
