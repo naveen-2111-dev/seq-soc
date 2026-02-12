@@ -1,5 +1,4 @@
 import express, { Router } from 'express';
-import { postService } from '../service/post-service.js';
 import { commentService } from '../service/comment-service.js';
 
 const router:Router = express.Router();

@@ -25,6 +25,7 @@ export async function loginService(email: string, password: string) {
     };
   }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { passwordHash, ...safeUser } = res.user.toJSON
     ? res.user.toJSON()
     : res.user;

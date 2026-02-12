@@ -28,8 +28,6 @@ export function AuthRepository() {
       },
     });
 
-    user?.fullName
-
     return {
       user,
       message: 'user login successfully',
