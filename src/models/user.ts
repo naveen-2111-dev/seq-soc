@@ -7,6 +7,7 @@ export interface UserAttributes {
   lastName: string;
   email: string;
   passwordHash: string;
+  profileImage?: string;
   fullName?: string;
 }
 
@@ -16,7 +17,7 @@ export class User extends Model<UserAttributes> implements UserAttributes {
     declare lastName: string;
     declare email: string;
     declare passwordHash: string;
-
+    declare profileImage?: string;
     toJSON() {
         const attribute = { ...this.get() };
         attribute.fullName = this.fullName;
@@ -45,6 +46,10 @@ User.init(
             validate: {
                 isEmail: true
             }
+        },
+        profileImage: {
+            type: DataTypes.STRING,
+            allowNull: true
         },
         passwordHash: {
             type: DataTypes.STRING,
