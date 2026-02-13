@@ -15,6 +15,12 @@ tags:
     description: Post management and feed
   - name: Comments
     description: Comment operations
+  - name: Follow
+    description: Follow and unfollow users
+  - name: Save
+    description: Save and unsave posts
+  - name: Profile
+    description: User profile operations
 paths:
   /api/auth/login:
     post:
@@ -412,6 +418,246 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/follow/follow:
+    post:
+      tags:
+        - Follow
+      summary: Follow a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowRequest'
+      responses:
+        '200':
+          description: Follow created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/follow/unfollow:
+    delete:
+      tags:
+        - Follow
+      summary: Unfollow a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowRequest'
+      responses:
+        '200':
+          description: Follow removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnfollowResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/follow/followers/{userId}:
+    get:
+      tags:
+        - Follow
+      summary: Get followers for a user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Followers fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowArrayResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/follow/following/{userId}:
+    get:
+      tags:
+        - Follow
+      summary: Get following for a user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Following fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowArrayResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/save/save:
+    post:
+      tags:
+        - Save
+      summary: Save a post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveRequest'
+      responses:
+        '200':
+          description: Post saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/save/unsave:
+    delete:
+      tags:
+        - Save
+      summary: Unsave a post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveRequest'
+      responses:
+        '200':
+          description: Post unsaved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '404':
+          description: Saved post not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/save/user/{userId}:
+    get:
+      tags:
+        - Save
+      summary: Get saved posts by user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Saved posts fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedPostArrayResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/profile:
+    put:
+      tags:
+        - Profile
+      summary: Update profile image
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdateRequest'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '400':
+          description: Missing email or profile image URL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - Profile
+      summary: Get profile by email
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Profile fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '400':
+          description: Missing email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     LoginRequest:
@@ -491,6 +737,37 @@ components:
           type: string
         userId:
           type: integer
+    FollowRequest:
+      type: object
+      required:
+        - followerId
+        - followingId
+      properties:
+        followerId:
+          type: integer
+        followingId:
+          type: integer
+    SaveRequest:
+      type: object
+      required:
+        - userId
+        - postId
+      properties:
+        userId:
+          type: integer
+        postId:
+          type: integer
+    ProfileUpdateRequest:
+      type: object
+      required:
+        - email
+        - profileImageUrl
+      properties:
+        email:
+          type: string
+          format: email
+        profileImageUrl:
+          type: string
     User:
       type: object
       properties:
@@ -504,6 +781,8 @@ components:
           type: string
           format: email
         passwordHash:
+          type: string
+        profileImage:
           type: string
         fullName:
           type: string
@@ -527,6 +806,42 @@ components:
           format: email
         fullName:
           type: string
+        profileImage:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Follow:
+      type: object
+      properties:
+        id:
+          type: integer
+        followerId:
+          type: integer
+        followingId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    SavePost:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        postId:
+          type: integer
+        User:
+          $ref: '#/components/schemas/UserPublic'
+        Post:
+          $ref: '#/components/schemas/Post'
         createdAt:
           type: string
           format: date-time
@@ -665,3 +980,48 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/PostWithCommentRow'
+    FollowResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        followerId:
+          type: integer
+        followingId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    FollowArrayResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/Follow'
+    UnfollowResponse:
+      type: integer
+      description: Number of rows deleted
+    SaveResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/SavePost'
+    SavedPostArrayResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/SavePost'
+    ProfileResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/User'
