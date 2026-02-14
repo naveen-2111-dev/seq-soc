@@ -10,6 +10,7 @@ import swaggerui from 'swagger-ui-express';
 import YAML from "yamljs";
 import path from "path";
 import helmet from 'helmet';
+import { authenticate } from './middleare.js';
 
 const app: Express = express();
 
@@ -18,11 +19,11 @@ app.use(helmet());
 
 app.use('/api/auth', login);
 app.use('/api/auth', register);
-app.use('/api/posts', post);
-app.use('/api/comments', comment);
-app.use('/api/follow', follow);
-app.use('/api/save', save);
-app.use('/api/profile', profile);
+app.use('/api/posts', authenticate, post);
+app.use('/api/comments', authenticate, comment);
+app.use('/api/follow', authenticate, follow);
+app.use('/api/save', authenticate, save);
+app.use('/api/profile', authenticate, profile);
 
 const swagger_document = YAML.load(path.join(process.cwd(), "swagger.yaml"));
 app.use('/', swaggerui.serve, swaggerui.setup(swagger_document));

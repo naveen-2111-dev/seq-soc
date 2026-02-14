@@ -15,6 +15,13 @@ router.post("/login", async (req, res) => {
     }
 
     const result = await loginService(email, password);
+   
+    res.cookie("refreshToken", result.user?.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     return res.status(result.status).json(result);
 
