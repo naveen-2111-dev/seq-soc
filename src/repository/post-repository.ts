@@ -30,8 +30,6 @@ export function postRepository() {
     const post = await Post.findByPk(postId);
     if (!post) throw new Error('Post not found');
 
-    console.log(content);
-
     post.content = content;
     await post.save();
 
