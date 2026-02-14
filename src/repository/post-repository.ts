@@ -129,6 +129,7 @@ export function postRepository() {
       where: {
         visibility: true,
       },
+      order: sequelize.literal('RAND()'),
     });
 
     return {
