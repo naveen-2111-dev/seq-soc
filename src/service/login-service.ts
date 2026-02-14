@@ -34,7 +34,7 @@ export async function loginService(email: string, password: string) {
     email: mail,
   };
 
-  const token = generateToken(payload, process.env.JWT_SECRET!, '1h');
+  const token = generateToken(payload, process.env.JWT_SECRET!, '15m');
   const refreshToken = generateToken(
     payload,
     process.env.JWT_REFRESH_SECRET!,
