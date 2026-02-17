@@ -9,8 +9,6 @@ info:
 servers:
   - url: http://localhost:8080
 tags:
-security:
-  - bearerAuth: []
   - name: Auth
     description: Login and registration
   - name: Posts
@@ -23,12 +21,15 @@ security:
     description: Save and unsave posts
   - name: Profile
     description: User profile operations
+security:
+  - accessTokenCookie: []
 paths:
   /api/auth/login:
     post:
       tags:
         - Auth
       summary: Login
+      security: []
       requestBody:
         required: true
         content:
@@ -71,6 +72,7 @@ paths:
       tags:
         - Auth
       summary: Register
+      security: []
       requestBody:
         required: true
         content:
@@ -92,6 +94,50 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/auth/me:
+    get:
+      tags:
+        - Auth
+      summary: Get current user from access token
+      responses:
+        '200':
+          description: User authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/refresh:
+    post:
+      tags:
+        - Auth
+      summary: Refresh access token
+      security:
+        - refreshTokenCookie: []
+      responses:
+        '200':
+          description: Access token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshResponse'
+        '401':
+          description: No refresh token found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Invalid or expired refresh token
           content:
             application/json:
               schema:
@@ -613,7 +659,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProfileResponse'
         '400':
-          description: Missing email or profile image URL
+          description: Missing profile image URL
           content:
             application/json:
               schema:
@@ -627,14 +673,7 @@ paths:
     get:
       tags:
         - Profile
-      summary: Get profile by email
-      parameters:
-        - name: email
-          in: query
-          required: true
-          schema:
-            type: string
-            format: email
+      summary: Get profile for current user
       responses:
         '200':
           description: Profile fetched
@@ -643,7 +682,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProfileResponse'
         '400':
-          description: Missing email
+          description: Missing email in token
           content:
             application/json:
               schema:
@@ -662,10 +701,14 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    accessTokenCookie:
+      type: apiKey
+      in: cookie
+      name: accessToken
+    refreshTokenCookie:
+      type: apiKey
+      in: cookie
+      name: refreshToken
   schemas:
     LoginRequest:
       type: object
@@ -767,12 +810,8 @@ components:
     ProfileUpdateRequest:
       type: object
       required:
-        - email
         - profileImageUrl
       properties:
-        email:
-          type: string
-          format: email
         profileImageUrl:
           type: string
     User:
@@ -923,13 +962,46 @@ components:
             error:
               type: object
               additionalProperties: true
+    AuthTokenPayload:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+        iat:
+          type: integer
+        exp:
+          type: integer
+    LoginUser:
+      type: object
+      properties:
+        safeUser:
+          $ref: '#/components/schemas/UserPublic'
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
     LoginResponse:
       allOf:
         - $ref: '#/components/schemas/BaseResponse'
         - type: object
           properties:
             user:
-              $ref: '#/components/schemas/UserPublic'
+              $ref: '#/components/schemas/LoginUser'
+    MeResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/AuthTokenPayload'
+    RefreshResponse:
+      type: object
+      properties:
+        message:
+          type: string
     RegisterResponse:
       allOf:
         - $ref: '#/components/schemas/BaseResponse'
