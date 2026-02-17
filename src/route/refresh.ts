@@ -1,28 +1,19 @@
-import jwt from "jsonwebtoken";
-import express, { Router, type Request, type Response } from "express";
+import jwt from 'jsonwebtoken';
+import express, { Router, type Request, type Response } from 'express';
 
 const router: Router = express.Router();
 
-router.post("/", async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   try {
-    const cookieHeader = req.headers.cookie;
-
-    if (!cookieHeader) {
-      return res.status(401).json({ message: "No cookies found" });
-    }
-
-    const refreshToken = cookieHeader
-      .split("; ")
-      .find((c) => c.startsWith("refreshToken="))
-      ?.split("=")[1];
+    const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
-      return res.status(401).json({ message: "Refresh token not found" });
+      return res.status(401).json({ message: 'No refresh token found' });
     }
 
     const decoded = jwt.verify(
       refreshToken,
-      process.env.JWT_REFRESH_SECRET as string
+      process.env.JWT_REFRESH_SECRET as string,
     ) as jwt.JwtPayload;
 
     const newAccessToken = jwt.sign(
@@ -31,15 +22,23 @@ router.post("/", async (req: Request, res: Response) => {
         email: decoded.email,
       },
       process.env.JWT_SECRET as string,
-      { expiresIn: "15m" }
+      { expiresIn: '15m' },
     );
 
-    return res.status(200).json({
-      accessToken: newAccessToken,
+    res.cookie('accessToken', newAccessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 15 * 60 * 1000,
     });
+
+    return res.status(200).json({
+      message: 'Access token refreshed successfully',
+    });
+    
   } catch (error) {
     return res.status(403).json({
-      message: "Invalid or expired refresh token",
+      message: 'Invalid or expired refresh token',
     });
   }
 });

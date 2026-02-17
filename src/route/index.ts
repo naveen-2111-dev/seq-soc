@@ -6,14 +6,6 @@ import follow from './follow.js';
 import save from './save.js';
 import profile from './profile.js';
 import refresh from './refresh.js';
+import me from './me.js';
 
-export {
-  login,
-  register,
-  post,
-  comment,
-  follow,
-  save,
-  profile,
-  refresh
-};
+export { login, register, post, comment, follow, save, profile, refresh, me };
