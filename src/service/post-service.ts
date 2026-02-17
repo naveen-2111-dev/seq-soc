@@ -5,12 +5,11 @@ export function postService() {
     createPost,
     updatePost,
     changeVisibility,
-    downVote,
     getAllPost,
     getPost,
     getTrendingPost,
     getbyVisibility,
-    upVote,
+    getUserPosts
   } = postRepository();
 
   const PostCreate = async (
@@ -21,20 +20,12 @@ export function postService() {
     return await createPost(content, imageUrl, userId);
   };
 
-  const PostUpdate = async (postId: number, content: string) => {
-    return await updatePost(postId, content);
+  const PostUpdate = async (postId: number, content: string, imageUrl: string) => {
+    return await updatePost(postId, content, imageUrl);
   };
 
   const ChangeVisibility = async (postId: number, visibility: boolean) => {
     return await changeVisibility(postId, visibility);
-  };
-
-  const UpVote = async (postId: number, status: 'cr' | 'rm') => {
-    return await upVote(postId, status);
-  };
-
-  const DownVote = async (postId: number, status: 'cr' | 'rm') => {
-    return await downVote(postId, status);
   };
 
   const GetAllPost = async () => {
@@ -43,6 +34,10 @@ export function postService() {
 
   const GetPost = async (postId: number) => {
     return await getPost(postId);
+  };
+
+  const GetUserPosts = async (userId: number) => {
+    return await getUserPosts(userId);
   };
 
   const GetByVisibility = async (visibility: boolean) => {
@@ -57,11 +52,11 @@ export function postService() {
     PostCreate,
     PostUpdate,
     ChangeVisibility,
-    UpVote,
-    DownVote,
     GetAllPost,
     GetPost,
     GetByVisibility,
     GetTrendingPost,
+    getUserPosts,
+    GetUserPosts
   };
 }

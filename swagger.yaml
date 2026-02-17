@@ -17,6 +17,8 @@ tags:
     description: Comment operations
   - name: Follow
     description: Follow and unfollow users
+  - name: Like
+    description: Like and unlike posts
   - name: Save
     description: Save and unsave posts
   - name: Profile
@@ -346,6 +348,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/posts:
+    get:
+      tags:
+        - Posts
+      summary: Get posts for the authenticated user
+      responses:
+        '200':
+          description: Posts fetched
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostArrayResponse'
+        '400':
+          description: User ID is required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /api/posts/{postId}:
     get:
       tags:
@@ -514,17 +540,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/follow/followers/{userId}:
+  /api/follow/followers:
     get:
       tags:
         - Follow
-      summary: Get followers for a user
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
+      summary: Get followers for the authenticated user
       responses:
         '200':
           description: Followers fetched
@@ -538,17 +558,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/follow/following/{userId}:
+  /api/follow/following:
     get:
       tags:
         - Follow
-      summary: Get following for a user
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
+      summary: Get following for the authenticated user
       responses:
         '200':
           description: Following fetched
@@ -556,6 +570,66 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FollowArrayResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/like/like:
+    post:
+      tags:
+        - Like
+      summary: Like a post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LikeRequest'
+      responses:
+        '200':
+          description: Post liked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '400':
+          description: User ID and Post ID are required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/like/unlike:
+    delete:
+      tags:
+        - Like
+      summary: Unlike a post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LikeRequest'
+      responses:
+        '200':
+          description: Post unliked successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseResponse'
+        '400':
+          description: User ID and Post ID are required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
           content:
@@ -580,6 +654,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SaveResponse'
+        '400':
+          description: User ID is required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
           content:
@@ -604,6 +684,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BaseResponse'
+        '400':
+          description: User ID is required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Saved post not found
           content:
@@ -616,17 +702,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /api/save/user/{userId}:
+  /api/save/user:
     get:
       tags:
         - Save
-      summary: Get saved posts by user
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
+      summary: Get saved posts for the authenticated user
       responses:
         '200':
           description: Saved posts fetched
@@ -634,6 +714,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SavedPostArrayResponse'
+        '400':
+          description: User ID is required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
           content:
@@ -760,6 +846,9 @@ components:
       properties:
         content:
           type: string
+        imageUrl:
+          type: string
+          nullable: true
     VisibilityUpdateRequest:
       type: object
       required:
@@ -790,21 +879,22 @@ components:
     FollowRequest:
       type: object
       required:
-        - followerId
         - followingId
       properties:
-        followerId:
-          type: integer
         followingId:
+          type: integer
+    LikeRequest:
+      type: object
+      required:
+        - postId
+      properties:
+        postId:
           type: integer
     SaveRequest:
       type: object
       required:
-        - userId
         - postId
       properties:
-        userId:
-          type: integer
         postId:
           type: integer
     ProfileUpdateRequest:
@@ -882,6 +972,7 @@ components:
           type: integer
         userId:
           type: integer
+          readonly: true
         postId:
           type: integer
         User:

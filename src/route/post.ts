@@ -1,17 +1,17 @@
 import express, { Router } from 'express';
 import { postService } from '../service/post-service.js';
+import { getUserIdFromRequest } from '../helper/get-user-id.js';
 
 const router:Router = express.Router();
 const {
   PostCreate,
   PostUpdate,
   ChangeVisibility,
-  UpVote,
-  DownVote,
   GetAllPost,
   GetPost,
   GetByVisibility,
   GetTrendingPost,
+  getUserPosts
 } = postService();
 
 router.post('/create', async (req, res) => {
@@ -22,8 +22,8 @@ router.post('/create', async (req, res) => {
 
 router.put('/update/:postId', async (req, res) => {
   const { postId } = req.params;
-  const { content } = req.body;
-  const result = await PostUpdate(Number(postId), content);
+  const { content, imageUrl } = req.body;
+  const result = await PostUpdate(Number(postId), content, imageUrl);
   res.json(result);
 });
 
@@ -33,20 +33,6 @@ router.patch('/visibility/:postId', async (req, res) => {
   const result = await ChangeVisibility(Number(postId), visibility);
   res.json(result);
 }); 
-
-router.patch('/upvote/:postId', async (req, res) => {
-  const { postId } = req.params;
-  const { status } = req.body;
-  const result = await UpVote(Number(postId), status);
-  res.json(result);
-});
-
-router.patch('/downvote/:postId', async (req, res) => {
-  const { postId } = req.params;
-  const { status } = req.body;
-  const result = await DownVote(Number(postId), status);
-  res.json(result);
-});
 
 router.get('/all', async (_req, res) => {
   const result = await GetAllPost();
@@ -67,6 +53,12 @@ router.get('/visibility/:visibility', async (req, res) => {
 router.get('/:postId', async (req, res) => {
   const { postId } = req.params;
   const result = await GetPost(Number(postId));
+  res.json(result);
+});
+
+router.get('/', async (req, res) => {
+  const userId = getUserIdFromRequest(req);
+  const result = await getUserPosts(Number(userId));
   res.json(result);
 });
 

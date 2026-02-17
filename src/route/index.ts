@@ -7,5 +7,17 @@ import save from './save.js';
 import profile from './profile.js';
 import refresh from './refresh.js';
 import me from './me.js';
+import like from './like.js';
 
-export { login, register, post, comment, follow, save, profile, refresh, me };
+export {
+  login,
+  register,
+  post,
+  comment,
+  follow,
+  save,
+  profile,
+  refresh,
+  me,
+  like,
+};

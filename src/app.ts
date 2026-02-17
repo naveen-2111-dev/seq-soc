@@ -15,7 +15,8 @@ import {
   refresh,
   register,
   save,
-  me
+  me,
+  like
 } from './route/index.js';
 
 const app: Express = express();
@@ -36,8 +37,9 @@ app.use('/api/auth', me);
 app.use('/api/posts', authenticate, post);
 app.use('/api/comments', authenticate, comment);
 app.use('/api/follow', authenticate, follow);
-app.use('/api/save', authenticate, save);
+app.use('/api', authenticate, save);
 app.use('/api/profile', authenticate, profile);
+app.use('/api/like', authenticate, like);
 app.use('/api/refresh', refresh);
 
 const swagger_document = YAML.load(path.join(process.cwd(), 'swagger.yaml'));

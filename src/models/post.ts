@@ -9,8 +9,6 @@ interface PostAttributes {
   imageUrl?: string;
   createdAt?: Date;
   updatedAt?: Date;
-  upVotes: number;
-  downVotes: number;
   visibility: boolean;
 }
 
@@ -20,8 +18,6 @@ export class Post extends Model<PostAttributes> implements PostAttributes {
   declare content: string;
   declare imageUrl?: string;
   declare visibility: boolean;
-  declare upVotes: number;
-  declare downVotes: number;
 
   declare readonly createdAt: Date;
   declare updatedAt: Date;
@@ -46,16 +42,6 @@ Post.init(
       allowNull: false,
       defaultValue: true,
     },
-    upVotes: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
-    downVotes: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
   },
   {
     indexes: [
@@ -66,10 +52,6 @@ Post.init(
       {
         name: 'idx_visibility_createdAt',
         fields: ['visibility', 'createdAt'],
-      },
-      {
-        name: 'idx_upVotes',
-        fields: ['upVotes'],
       },
     ],
     sequelize,

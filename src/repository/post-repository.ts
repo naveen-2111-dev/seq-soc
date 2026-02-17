@@ -1,8 +1,9 @@
 import { sequelize } from '../config/database.js';
 import { Comment } from '../models/comments.js';
+import { Like } from '../models/like.js';
 import { Post } from '../models/post.js';
 import { User } from '../models/user.js';
-import { Op } from 'sequelize';
+import { col, fn, literal, Op } from 'sequelize';
 
 export function postRepository() {
   const createPost = async (
@@ -15,8 +16,6 @@ export function postRepository() {
       imageUrl,
       userId,
       visibility: true,
-      downVotes: 0,
-      upVotes: 0,
     });
 
     return {
@@ -26,12 +25,23 @@ export function postRepository() {
     };
   };
 
-  const updatePost = async (postId: number, content: string) => {
+  const updatePost = async (
+    postId: number,
+    content: string,
+    imageUrl: string,
+  ) => {
     const post = await Post.findByPk(postId);
     if (!post) throw new Error('Post not found');
 
-    post.content = content;
-    await post.save();
+    if (content !== undefined) post.content = content;
+    if (imageUrl !== undefined) post.imageUrl = imageUrl;
+
+    try {
+      await post.save();
+    } catch (err: any) {
+      console.error('Sequelize update error:', err.parent || err);
+      throw new Error('Failed to update post');
+    }
 
     const updatedPost = await Post.findByPk(postId);
 
@@ -70,36 +80,6 @@ export function postRepository() {
     };
   };
 
-  const upVote = async (postId: number, status: 'cr' | 'rm') => {
-    const post = await Post.findByPk(postId);
-    if (!post) throw new Error('Post not found');
-
-    await post.increment({ upVotes: status === 'cr' ? 1 : -1 });
-
-    await post.reload();
-
-    return {
-      status: 200,
-      message: 'vote updated',
-      data: post,
-    };
-  };
-
-  const downVote = async (postId: number, status: 'cr' | 'rm') => {
-    const post = await Post.findByPk(postId);
-    if (!post) throw new Error('Post not found');
-
-    await post.increment({ downVotes: status === 'cr' ? 1 : -1 });
-
-    await post.reload();
-
-    return {
-      status: 200,
-      message: 'vote updated',
-      data: post,
-    };
-  };
-
   const getComment = async (commentId: number) => {
     const data = await Comment.findByPk(commentId);
 
@@ -129,7 +109,20 @@ export function postRepository() {
       where: {
         visibility: true,
       },
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['id', 'firstName', 'profileImage'],
+        },
+        {
+          model: Like,
+          as: 'Likes',
+          attributes: ['userId'],
+        },
+      ],
       order: sequelize.literal('RAND()'),
+      limit: 50,
     });
 
     return {
@@ -145,6 +138,20 @@ export function postRepository() {
     return {
       status: 200,
       message: 'post fetched successfully',
+      data,
+    };
+  };
+
+  const getUserPosts = async (userId: number) => {
+    const data = await Post.findAll({
+      where: {
+        userId,
+      },
+    });
+
+    return {
+      status: 200,
+      message: 'posts fetched successfully',
       data,
     };
   };
@@ -170,9 +177,24 @@ export function postRepository() {
         visibility: true,
         createdAt: { [Op.gte]: yesterday },
       },
-      order: [['upVotes', 'DESC']],
-      limit: 20,
-      include: [{ model: User, as: 'author' }],
+      include: [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['id', 'firstName', 'profileImage'],
+        },
+        {
+          model: Like,
+          as: 'Likes',
+          attributes: [],
+        },
+      ],
+      attributes: {
+        include: [[fn('COUNT', col('Likes.userId')), 'likeCount']],
+      },
+      group: ['Post.id'],
+      order: [[literal('likeCount'), 'DESC']],
+      subQuery: false,
     });
 
     return {
@@ -206,9 +228,8 @@ export function postRepository() {
     getPost,
     getbyVisibility,
     getTrendingPost,
-    upVote,
-    downVote,
     getCommentByPost,
     getPostWithComment,
+    getUserPosts,
   };
 }
