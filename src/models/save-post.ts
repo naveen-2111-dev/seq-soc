@@ -41,6 +41,13 @@ SavePost.init(
     modelName: 'SavePost',
     tableName: 'SavedPosts',
     timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ['userId', 'postId'],
+        name: 'unique_user_post',
+      }
+    ]
   },
 );
 

@@ -34,15 +34,15 @@ app.use(cors({
 app.use('/api/auth', login);
 app.use('/api/auth', register);
 app.use('/api/auth', me);
+app.use('/api/refresh', refresh);
 app.use('/api/posts', authenticate, post);
 app.use('/api/comments', authenticate, comment);
 app.use('/api/follow', authenticate, follow);
-app.use('/api', authenticate, save);
+app.use('/api/save', authenticate, save);
 app.use('/api/profile', authenticate, profile);
 app.use('/api/like', authenticate, like);
-app.use('/api/refresh', refresh);
 
 const swagger_document = YAML.load(path.join(process.cwd(), 'swagger.yaml'));
-app.use('/', swaggerui.serve, swaggerui.setup(swagger_document));
+app.use('/doc', swaggerui.serve, swaggerui.setup(swagger_document));
 
 export default app;

@@ -2,6 +2,21 @@ import { Post, SavePost, User } from '../models/index.js';
 
 export function SaveRepository() {
   const savePost = async (userId: number, postId: number) => {
+    const existingSave = await SavePost.findOne({
+      where: {
+        userId,
+        postId
+      }
+    });
+
+    if (existingSave) {
+      return {
+        status: 409,
+        message: 'Post is already saved',
+        data: existingSave,
+      };
+    }
+
     const data = await SavePost.create(
       {
         userId,
@@ -46,6 +61,11 @@ export function SaveRepository() {
           as: 'User',
           attributes: ['id', 'firstName', 'lastName', 'email'],
         },
+        {
+          model: Post,
+          as: 'Post',
+          attributes: ['id', 'content', 'imageUrl', 'visibility', 'createdAt', 'updatedAt'],
+        }
       ],
     });
 
