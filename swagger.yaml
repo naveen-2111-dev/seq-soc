@@ -23,6 +23,8 @@ tags:
     description: Save and unsave posts
   - name: Profile
     description: User profile operations
+  - name: Upload
+    description: Media upload
 security:
   - accessTokenCookie: []
 paths:
@@ -149,19 +151,42 @@ paths:
       tags:
         - Posts
       summary: Create a post
+      description: Create a new post with content and optional image URL
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PostCreateRequest'
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
+                  description: The content of the post
+                imageUrl:
+                  type: string
+                  nullable: true
+                  description: Optional image URL for the post
       responses:
         '200':
-          description: Post created
+          description: Post created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostResponse'
+        '400':
+          description: Missing required fields or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
           content:
@@ -396,6 +421,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/upload:
+    post:
+      tags:
+        - Upload
+      summary: Upload a media file
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: File uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+        '400':
+          description: No file uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadErrorResponse'
+        '500':
+          description: Upload failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadErrorResponse'
   /api/comments/{postId}:
     post:
       tags:
@@ -992,6 +1053,7 @@ components:
           type: integer
         userId:
           type: integer
+          readonly: true
         content:
           type: string
         imageUrl:
@@ -1195,3 +1257,20 @@ components:
           properties:
             data:
               $ref: '#/components/schemas/User'
+    UploadResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        url:
+          type: string
+      required:
+        - success
+        - url
+    UploadErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error

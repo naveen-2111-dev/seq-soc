@@ -15,8 +15,9 @@ const {
 } = postService();
 
 router.post('/create', async (req, res) => {
-  const { content, imageUrl, userId } = req.body;
-  const result = await PostCreate(content, imageUrl, userId);
+  const { content, imageUrl } = req.body;
+  const userId = getUserIdFromRequest(req);
+  const result = await PostCreate(content, imageUrl, Number(userId));
   res.json(result);
 });
 

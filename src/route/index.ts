@@ -8,6 +8,7 @@ import profile from './profile.js';
 import refresh from './refresh.js';
 import me from './me.js';
 import like from './like.js';
+import upload from './upload.js';
 
 export {
   login,
@@ -20,4 +21,5 @@ export {
   refresh,
   me,
   like,
+  upload
 };

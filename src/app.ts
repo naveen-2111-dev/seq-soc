@@ -1,7 +1,7 @@
 import express, { type Express } from 'express';
 import swaggerui from 'swagger-ui-express';
 import YAML from 'yamljs';
-import path from 'path';
+import path, { join } from 'path';
 import helmet from 'helmet';
 import cors from 'cors';
 import { authenticate } from './middleare.js';
@@ -16,20 +16,32 @@ import {
   register,
   save,
   me,
-  like
+  like,
+  upload,
 } from './route/index.js';
 
 const app: Express = express();
-app.use(cookieParser()); 
+app.use(cookieParser());
 app.use(express.json());
-app.use(helmet());
-app.use(cors({
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  origin: [
-    "http://localhost:5173",
-  ],
-}));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'http://localhost:8080'],
+      },
+    },
+  }),
+);
+app.use(
+  cors({
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    origin: ['http://localhost:5173'],
+  }),
+);
+app.use(express.static(join(process.cwd(), 'public')));
 
 app.use('/api/auth', login);
 app.use('/api/auth', register);
@@ -41,6 +53,7 @@ app.use('/api/follow', authenticate, follow);
 app.use('/api/save', authenticate, save);
 app.use('/api/profile', authenticate, profile);
 app.use('/api/like', authenticate, like);
+app.use('/api/upload', authenticate, upload);
 
 const swagger_document = YAML.load(path.join(process.cwd(), 'swagger.yaml'));
 app.use('/doc', swaggerui.serve, swaggerui.setup(swagger_document));

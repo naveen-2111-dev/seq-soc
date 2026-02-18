@@ -1,5 +1,6 @@
 import express, { Router } from 'express';
 import { commentService } from '../service/comment-service.js';
+import { getUserIdFromRequest } from '../helper/get-user-id.js';
 
 const router:Router = express.Router();
 const {
@@ -11,8 +12,9 @@ const {
 
 router.post('/:postId', async (req, res) => {
   const { postId } = req.params;
-  const { content, userId } = req.body;
-  const result = await AddComment(Number(postId), content, userId);
+  const { content } = req.body;
+  const userId = getUserIdFromRequest(req);
+  const result = await AddComment(Number(postId), content, Number(userId));
   res.json(result);
 });
 

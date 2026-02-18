@@ -95,6 +95,13 @@ export function postRepository() {
       where: {
         postId: postId,
       },
+      include:[
+        {
+          model: User,
+          as: 'author',
+          attributes: ['id', 'firstName', 'profileImage'],
+        }
+      ]
     });
 
     return {
